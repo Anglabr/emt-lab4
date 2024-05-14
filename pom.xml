@@ -17,6 +17,7 @@
 
     <modules>
         <module>clubs-management</module>
+        <module>shared-kernel</module>
     </modules>
 
 </project>
