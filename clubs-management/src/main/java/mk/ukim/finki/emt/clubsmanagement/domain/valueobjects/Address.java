@@ -1,6 +1,8 @@
 package mk.ukim.finki.emt.clubsmanagement.domain.valueobjects;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import mk.ukim.finki.emt.clubsmanagement.domain.enums.City;
 import mk.ukim.finki.emt.sharedkernel.domain.base.ValueObject;
@@ -11,6 +13,7 @@ import org.springframework.lang.NonNull;
 public class Address implements ValueObject {
     private final String streetAddress;
 
+    @Enumerated(EnumType.STRING)
     private final City city;
 
     private final int zipCode;

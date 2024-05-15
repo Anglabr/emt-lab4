@@ -2,11 +2,13 @@ package mk.ukim.finki.emt.sharedkernel.domain.base;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
 import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 
 @MappedSuperclass
+@Getter
 public class AbstractEntity<ID extends DomainObjectId> {
     @EmbeddedId
     private ID id;

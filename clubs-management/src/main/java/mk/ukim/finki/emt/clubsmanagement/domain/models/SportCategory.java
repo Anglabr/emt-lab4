@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import mk.ukim.finki.emt.sharedkernel.domain.base.AbstractEntity;
+import org.springframework.lang.NonNull;
 
 @Entity
 @Table(name = "sport_category")
@@ -13,6 +14,11 @@ public class SportCategory extends AbstractEntity<SportCategoryId> {
 
     protected SportCategory() {
         super(SportCategoryId.randomId(SportCategoryId.class));
+    }
+
+    public SportCategory(@NonNull String name) {
+        super(SportCategoryId.randomId(SportCategoryId.class));
+        this.name = name;
     }
 
     public static SportCategory build(String name) {
