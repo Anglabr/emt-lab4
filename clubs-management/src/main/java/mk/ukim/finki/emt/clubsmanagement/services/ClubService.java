@@ -15,9 +15,9 @@ public interface ClubService {
 
     List<Club> findAll();
 
-    Optional<Club> findById();
+    Club findById(ClubId clubId);
 
-    void updateClubDetails(ClubForm clubForm);
+    void updateClubGeneralInformation(ClubId clubId, ClubForm clubForm);
 
     void addSportToClub(ClubId clubId, SportForm sportForm);
 

@@ -1,6 +1,7 @@
 package mk.ukim.finki.emt.clubsmanagement.services.impl;
 
 import lombok.AllArgsConstructor;
+import mk.ukim.finki.emt.clubsmanagement.domain.exceptions.ClubIdNotFoundException;
 import mk.ukim.finki.emt.clubsmanagement.domain.models.*;
 import mk.ukim.finki.emt.clubsmanagement.domain.repository.ClubRepository;
 import mk.ukim.finki.emt.clubsmanagement.domain.repository.SportCategoryRepository;
@@ -44,32 +45,59 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public List<Club> findAll() {
-        return null;
+        return clubRepository.findAll();
     }
 
     @Override
-    public Optional<Club> findById() {
-        return Optional.empty();
+    public Club findById(ClubId clubId) {
+        return clubRepository.findById(clubId).orElseThrow(ClubIdNotFoundException::new);
     }
 
     @Override
-    public void updateClubDetails(ClubForm clubForm) {
-
+    public void updateClubGeneralInformation(ClubId clubId, ClubForm clubForm) {
+        Objects.requireNonNull(clubForm, "The club must not be null.");
+        Club club = clubRepository.findById(clubId).orElseThrow(ClubIdNotFoundException::new);
+        // update general info
+        clubRepository.saveAndFlush(club);
     }
 
     @Override
     public void addSportToClub(ClubId clubId, SportForm sportForm) {
-
+        Club club = clubRepository.findById(clubId).orElseThrow(ClubIdNotFoundException::new);
+        Sport sport;
+        if (sportForm.getId() != null) {
+            sport = sportRepository.findById(sportForm.getId()).orElseThrow();
+        }
+        else {
+            sport = new Sport(sportForm.getName(), sportForm.getDescription(), sportForm.getCategories().stream().map(sportCategoryForm ->
+                    new SportCategory(sportCategoryForm.getName())).collect(Collectors.toSet()));
+        }
+        // club add sport
+        clubRepository.saveAndFlush(club);
     }
 
     @Override
     public void removeSportFromClub(ClubId clubId, SportId sportId) {
-
+        Club club = clubRepository.findById(clubId).orElseThrow(ClubIdNotFoundException::new);
+        // club remove sport
+        clubRepository.saveAndFlush(club);
     }
 
     private Club toDomainObject(ClubForm clubForm) throws URISyntaxException {
         var website = new URI(clubForm.getWebsite());
 
+        var sports = getSports(clubForm);
+
+        return new Club(
+                clubForm.getName(),
+                clubForm.getDescription(),
+                website,
+                clubForm.getPhoneNumber(),
+                clubForm.getAddress(),
+                sports);
+    }
+
+    private Set<Sport> getSports(ClubForm clubForm) {
         var sports = new HashSet<Sport>();
         for (var sport : clubForm.getSports()) {
             Sport fetchedSport;
@@ -85,12 +113,6 @@ public class ClubServiceImpl implements ClubService {
             sports.add(fetchedSport);
         }
 
-        return new Club(
-                clubForm.getName(),
-                clubForm.getDescription(),
-                website,
-                clubForm.getPhoneNumber(),
-                clubForm.getAddress(),
-                sports);
+        return sports;
     }
 }
